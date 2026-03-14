@@ -8,11 +8,12 @@ library(xml2)
 
 ##### eloratings site #####
 # connection
-remDr <- RSelenium::rsDriver(
+remDr <- rsDriver(
   port = 4567L,
   browser = c("firefox"),
   version = "latest",
-  chromever = NULL
+  chromever = NULL,
+  phantomver = NULL
 )
 
 brow <- remDr[["client"]]
@@ -68,7 +69,8 @@ scapping_element <- function(url){
 urlbase <- "https://www.eloratings.net/"
 
 # empty list and loop to generate list of dataframes
-datesseq <- seq(1901, 2023, 1) # 1901 until 2023
+current_year <- year(now())
+datesseq <- seq(1901, current_year, 1) # 1901 until current year
 mesurls <- list()
 
 for (i in 1:length(datesseq)) {
@@ -86,7 +88,7 @@ results <- rbindlist(l = list_of_results) %>%
   as_tibble()
 
 # output
-write_csv(x = results, file = "csv/ranking_soccer_1901-2023.csv")
+write_csv(x = results, file = sprintf("csv/ranking_soccer_1901-%d.csv", current_year))
 
 # closing connection
 remDr[["client"]]$close()
